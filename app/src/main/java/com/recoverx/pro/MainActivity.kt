@@ -226,9 +226,34 @@ private fun HomeScreen(vm: RecoverViewModel, s: com.recoverx.pro.util.UiStrings,
             }
         }
 
-        if (state is ScanState.Running) {
-            val run = state as ScanState.Running
-            Card(shape = RoundedCornerShape(22.dp)) { Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) { Text(run.phase, fontWeight = FontWeight.Bold); LinearProgressIndicator(Modifier.fillMaxWidth()); Text(s.foundCount(run.found), style = MaterialTheme.typography.labelMedium) } }
+        when (val scan = state) {
+            is ScanState.Running -> {
+                Card(shape = RoundedCornerShape(22.dp)) {
+                    Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                        Text(scan.phase, fontWeight = FontWeight.Bold)
+                        LinearProgressIndicator(Modifier.fillMaxWidth())
+                        Text(s.foundCount(scan.found), style = MaterialTheme.typography.labelMedium)
+                    }
+                }
+            }
+            is ScanState.Done -> {
+                Card(shape = RoundedCornerShape(22.dp)) {
+                    Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                        Text("اكتمل الفحص", fontWeight = FontWeight.Bold)
+                        Text("تم العثور على ${scan.resultCount} ملف")
+                        Text("المصادر المفحوصة: ${scan.sourcesScanned}")
+                    }
+                }
+            }
+            is ScanState.Error -> {
+                Card(shape = RoundedCornerShape(22.dp)) {
+                    Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                        Text("حدث خطأ أثناء الفحص", fontWeight = FontWeight.Bold)
+                        Text(scan.message)
+                    }
+                }
+            }
+            is ScanState.Idle -> {}
         }
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
