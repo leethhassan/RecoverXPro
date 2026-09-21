@@ -1,4 +1,5 @@
 package com.recoverx.pro
+import androidx.activity.result.IntentSenderRequest
 
 import android.os.Bundle
 import android.provider.Settings
