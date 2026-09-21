@@ -1,0 +1,5 @@
+Copyright (c) 2026 RecoverX
+
+All rights reserved.
+
+This source package is provided for evaluation and development unless a separate license is granted by the copyright holder.

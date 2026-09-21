@@ -1,0 +1,15 @@
+RecoverX is a privacy-first Android photo recovery utility built around real, verifiable operations.
+
+Recover photos exposed through Android MediaStore, inspect system trash where the device exposes it, scan a folder you explicitly select, export recovered files, and carve JPEG/PNG images from a user-provided storage image or dump file.
+
+RecoverX does not invent scan percentages, fake recovery results, or promise universal recovery of permanently deleted data.
+
+Core features:
+• MediaStore image discovery
+• System-trash discovery on supported Android versions
+• User-selected folder scan through Android Storage Access Framework
+• Safe export to a user-selected folder
+• System-consent restore for MediaStore trash items
+• Deep forensic JPEG/PNG carving from a storage image or dump
+• Arabic and English interface
+• Local-first privacy
