@@ -164,7 +164,7 @@ private fun RecoverRoot(vm: RecoverViewModel, s: com.recoverx.pro.util.UiStrings
                 1 -> ResultsScreen(vm, s,
                     onExport = { destinationPicker.launch(null) },
                     onRestore = {
-                        vm.prepareTrashRestore { sender -> restoreLauncher.launch(android.content.IntentSenderRequest.Builder(sender).build()) }
+                        vm.prepareTrashRestore { sender -> restoreLauncher.launch(androidx.activity.result.IntentSenderRequest.Builder(sender).build()) }
                     }
                 )
                 else -> SettingsScreen(vm, s)
