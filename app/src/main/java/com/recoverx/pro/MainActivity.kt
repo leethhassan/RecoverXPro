@@ -202,7 +202,7 @@ private fun RecoverRoot(vm: RecoverViewModel, s: com.recoverx.pro.util.UiStrings
 private fun HomeScreen(vm: RecoverViewModel, s: com.recoverx.pro.util.UiStrings, onScan: () -> Unit, onFolder: () -> Unit, onDeep: () -> Unit) {
     val state by vm.scanState.collectAsState()
     val items by vm.items.collectAsState()
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 18.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(Modifier.fillMaxSize().padding(horizontal = 18.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         CenterAlignedTopAppBar(title = { Text("RecoverX", fontWeight = FontWeight.Black, letterSpacing = 0.5.sp) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent))
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -307,7 +307,7 @@ private fun PhotoGrid(items: List<RecoveryItem>, selected: Set<String>, onToggle
 @Composable
 private fun SettingsScreen(vm: RecoverViewModel, s: com.recoverx.pro.util.UiStrings) {
     val language by vm.language.collectAsState()
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    Column(Modifier.fillMaxSize().padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Text(s.settings, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
         Card(shape = RoundedCornerShape(24.dp)) { Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Rounded.Language, null); Spacer(Modifier.width(12.dp)); Text(s.language, fontWeight = FontWeight.Bold) }
