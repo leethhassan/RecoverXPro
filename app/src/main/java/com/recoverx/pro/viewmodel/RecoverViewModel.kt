@@ -63,7 +63,8 @@ class RecoverViewModel(app: Application) : AndroidViewModel(app) {
                 val result = engine.scanMedia(includeTrash = true) { phase, found ->
                     _scanState.value = ScanState.Running(phase, found)
                 }
-                _items.value = result.sortedWith(compareByDescending<RecoveryItem> { it.isTrashed }.thenByDescending { it.dateTaken ?: 0L })
+                _items.value = result.filter { it.isTrashed }
+                    .sortedWith(compareByDescending<RecoveryItem> { it.dateTaken ?: 0L })
                 _selected.value = emptySet()
                 _scanState.value = ScanState.Done(result.size, 1)
             }.onFailure {
