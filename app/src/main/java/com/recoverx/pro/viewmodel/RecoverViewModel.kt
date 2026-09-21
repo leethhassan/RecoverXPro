@@ -90,7 +90,7 @@ class RecoverViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             _scanState.value = ScanState.Running("Deep scan", 0)
             runCatching {
-                val result = carver.carve(fileUri) { found ->
+                val result = carver.carveTree(fileUri) { found ->
                     _scanState.value = ScanState.Running("Deep scan", found)
                 }
                 merge(result)

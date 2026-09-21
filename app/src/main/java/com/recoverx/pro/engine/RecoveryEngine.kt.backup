@@ -152,102 +152,32 @@ class RecoveryEngine(private val context: Context) {
 }
 
 class ForensicCarver(private val context: Context) {
-
-    suspend fun carveTree(
-        treeUri: Uri,
-        onProgress: suspend (found: Int) -> Unit
-    ): List<RecoveryItem> = withContext(Dispatchers.IO) {
-
-        val root = DocumentFile.fromTreeUri(context, treeUri)
-            ?: return@withContext emptyList()
-
+    suspend fun carve(inputUri: Uri, onProgress: suspend (found: Int) -> Unit): List<RecoveryItem> = withContext(Dispatchers.IO) {
+        val outputDir = File(context.cacheDir, "carved-images").apply { mkdirs() }
         val results = ArrayList<RecoveryItem>()
-        val stack = ArrayDeque<DocumentFile>()
-        stack.add(root)
-
-        while (stack.isNotEmpty()) {
-            coroutineContext.ensureActive()
-            val directory = stack.removeLast()
-
-            for (child in runCatching { directory.listFiles() }
-                .getOrDefault(emptyArray())) {
-
+        context.contentResolver.openInputStream(inputUri)?.use { input ->
+            var index = 0
+            while (true) {
                 coroutineContext.ensureActive()
-
-                if (child.isDirectory) {
-                    stack.add(child)
-                    continue
-                }
-
-                if (!child.isFile) continue
-
-                val mime = child.type ?: ""
-                val name = child.name ?: ""
-
-                if (!isPossibleImage(mime, name)) continue
-
-                runCatching {
-                    context.contentResolver.openInputStream(child.uri)?.use { input ->
-
-                        while (true) {
-                            coroutineContext.ensureActive()
-
-                            val found = ImageSignature.findNext(input) ?: break
-                            val ext = if (
-                                found.first == ImageSignature.Type.JPEG
-                            ) "jpg" else "png"
-
-                            val outputDir = File(
-                                context.cacheDir,
-                                "carved-images"
-                            ).apply { mkdirs() }
-
-                            val file = File(
-                                outputDir,
-                                "carved-${System.currentTimeMillis()}-${results.size}.$ext"
-                            )
-
-                            file.outputStream().use { output ->
-                                output.write(found.second)
-                            }
-
-                            results += RecoveryItem(
-                                id = "carved:${file.absolutePath}",
-                                uri = Uri.fromFile(file),
-                                name = file.name,
-                                sizeBytes = file.length(),
-                                dateTaken = null,
-                                mimeType = if (ext == "jpg")
-                                    "image/jpeg" else "image/png",
-                                source = RecoveryItem.Source.CARVED_IMAGE,
-                                isTrashed = false
-                            )
-
-                            onProgress(results.size)
-
-                            if (results.size >= 500) break
-                        }
-                    }
-                }
-
+                val found = ImageSignature.findNext(input) ?: break
+                val ext = if (found.first == ImageSignature.Type.JPEG) "jpg" else "png"
+                val file = File(outputDir, "carved-${System.currentTimeMillis()}-${index++}.$ext")
+                file.outputStream().use { it.write(found.second) }
+                val uri = Uri.fromFile(file)
+                results += RecoveryItem(
+                    id = "carved:${file.absolutePath}",
+                    uri = uri,
+                    name = file.name,
+                    sizeBytes = file.length(),
+                    dateTaken = null,
+                    mimeType = if (ext == "jpg") "image/jpeg" else "image/png",
+                    source = RecoveryItem.Source.CARVED_IMAGE,
+                    isTrashed = false
+                )
+                onProgress(results.size)
                 if (results.size >= 500) break
             }
-
-            if (results.size >= 500) break
         }
-
         results
-    }
-
-    private fun isPossibleImage(mime: String?, name: String?): Boolean {
-        if (mime?.startsWith("image/") == true) return true
-
-        return when (
-            name?.substringAfterLast('.', "")?.lowercase()
-        ) {
-            "jpg", "jpeg", "png", "webp", "heic", "heif",
-            "gif", "bmp", "tif", "tiff" -> true
-            else -> false
-        }
     }
 }

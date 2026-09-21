@@ -127,7 +127,7 @@ private fun RecoverRoot(vm: RecoverViewModel, s: com.recoverx.pro.util.UiStrings
     val folderPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         uri?.let { vm.scanFolder(it) }
     }
-    val deepPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+    val deepPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { vm.deepScan(it) }
     }
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -182,7 +182,7 @@ private fun RecoverRoot(vm: RecoverViewModel, s: com.recoverx.pro.util.UiStrings
             title = { Text(s.deepScan) },
             text = { Text(s.deepScanDescription) },
             confirmButton = {
-                Button(onClick = { showDeep = false; deepPicker.launch(null) }) { Text(s.selectStorageImage) }
+                Button(onClick = { showDeep = false; deepPicker.launch(arrayOf("*/*")) }) { Text(s.selectStorageImage) }
             },
             dismissButton = { TextButton(onClick = { showDeep = false }) { Text(s.cancel) } }
         )
